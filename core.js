@@ -205,6 +205,33 @@
     if (s.discount === "select") out += '<div class="row row--sub"><span>선택약정 할인 (월 ' + H.num(r.selectMonthly) + '원 × 24개월)</span><b class="num">- ' + H.won(r.selectMonthly * 24) + "</b></div>";
     return out;
   };
+
+  /* ---------- 탑승권 — 출발역(지금 통신사) → 도착역(개통 통신사) 이 그려진 금액 카드
+   * 상품 화면 · 주문서 · 접수 완료 · 신청내역 확인 · 내 노선이 같은 한 장을 쓴다 (2026-09-18 2판) ---------- */
+  H.ticketHtml = function (p, s, r, o) {
+    o = o || {};
+    var mine = H.state.carrier, from = mine ? H.carrierLabel(mine) : "?";
+    var fromSub = mine ? "지금 쓰는 통신사" : '<button type="button" data-act="gate">지금 쓰는 통신사 고르기</button>';
+    var tags = [H.discountLabel(s.discount), r.months ? r.months + "개월 할부" : "일시불", p.vols[s.vol][0] + " · " + p.colors[s.color][0]];
+    var conds = o.conds !== false ? '<div class="pbox__conds">' + ["부가서비스", "카드발급", "기존폰 반납", "인터넷 가입"].map(function (c) { return '<span class="cond-pill">' + c + "<b>" + H.icon("check") + "없음</b></span>"; }).join("") + "</div>" : "";
+    var rows = o.rows === "open"
+      ? '<div class="ticket__rows" style="border-top:1px solid var(--line-2);padding-top:12px"><div class="pbox__rows">' + H.priceRows(p, s, r) + (o.extraRows || "") + "</div></div>"
+      : '<details class="ticket__rows"><summary>금액 자세히 보기' + H.icon("chev-d") + '</summary><div class="pbox__rows">' + H.priceRows(p, s, r) + (o.extraRows || "") + "</div></details>";
+    var code = o.code ? '<div class="ticket__code"><i aria-hidden="true"></i><small class="num">' + H.esc(o.code) + "</small></div>" : "";
+    return '<div class="ticket' + (o.cls ? " " + o.cls : "") + '" aria-live="polite">' +
+      '<div class="ticket__hd"><small>HI STATION · TICKET</small><span>' + H.esc(p.name) + "</span></div>" +
+      '<div class="ticket__route">' +
+        '<div class="ticket__st"><small>출발</small><b>' + from + "</b><span>" + fromSub + "</span></div>" +
+        '<div class="ticket__arrow" aria-hidden="true"><i></i><em>' + H.methodLabel(s.method) + "</em></div>" +
+        '<div class="ticket__st ticket__st--to"><small>도착</small><b>' + H.carrierLabel(s.cc) + "</b><span>" + H.esc(r.plan ? r.plan.name : "") + "</span></div>" +
+      "</div>" +
+      '<div class="ticket__tags">' + tags.map(function (t) { return "<span>" + H.esc(t) + "</span>"; }).join("") + '<span class="ok">' + H.icon("check") + "조건 없음</span></div>" +
+      '<div class="ticket__cut" aria-hidden="true"></div>' +
+      '<div class="ticket__main"><div><small>나의 실구매가</small><b class="num">' + H.won(r.principal) + '</b></div><div><small>월 납부 금액 (VAT 포함)</small><b class="num">' + H.won(r.monthlyTotal) + "</b>" + (r.months ? '<em class="num">휴대폰 ' + H.won(r.monthlyTotal - r.planFee) + " + 요금 " + H.won(r.planFee) + "</em>" : "") + "</div></div>" +
+      conds +
+      (o.note !== false ? '<p class="pbox__note">지금 보시는 금액이 최종 결제 금액이에요. 추가 청구는 없어요.' + (r.months ? " 할부를 고른 경우에만 통신사 할부 이자(연 5.9%)가 붙어요." : "") + "</p>" : "") +
+      rows + code + "</div>";
+  };
   H.condLine = function (p, s, r) {
     return [H.carrierLabel(s.cc) + " " + H.methodLabel(s.method), p.vols[s.vol][0], p.colors[s.color][0], (r.plan || {}).name, H.discountLabel(s.discount), r.months ? r.months + "개월 할부" : "일시불"].filter(Boolean).join(" · ");
   };
@@ -305,6 +332,8 @@
     b.toggle("memo-hidden", !!H.state.memoHidden);
     b.toggle("has-tour", !!H.state.tour);
     b.toggle("is-admin", /^admin/.test(key));
+    b.toggle("is-home", key === "home");
+    b.toggle("is-inner", key !== "home");
     H.$("#app").innerHTML = header(r) + '<main id="main">' + (v.html || "") + "</main>" + (v.footer === false ? "" : footer()) + (v.bar ? '<div class="bar" id="bar">' + v.bar + "</div>" : "");
     var tb = H.$("#tourBar");
     if (tb) tb.innerHTML = H.tourBar ? H.tourBar() : "";

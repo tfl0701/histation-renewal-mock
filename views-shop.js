@@ -93,26 +93,26 @@
     }).join("");
     var mine = H.state.carrier;
     var note = mine ? `${H.carrierLabel(mine)}를 쓰고 계셔서 ${mine === "MVNO" ? "어디로 가도 번호이동이에요" : H.carrierLabel(mine) + "는 기기변경, 나머지는 번호이동이에요"}. 번호는 그대로예요.` : "지금 쓰는 통신사를 고르면 기기변경·번호이동을 저절로 맞춰 드려요.";
-    return `<div class="opt"><div class="opt__t"><h2>개통할 통신사</h2><span class="hint">세 곳 나란히 비교</span></div>
+    return `<div class="opt" data-n="02"><div class="opt__t"><h2>개통할 통신사</h2><span class="hint">세 곳 나란히 비교</span></div>
       <div class="opt__body"><div class="cc-cards${cards.length === 2 ? " cc-cards--2" : ""}">${html}</div>
       <p class="cc-note">${H.icon("train")}<span>${note} <button type="button" data-act="gate">${mine ? "지금 쓰는 통신사 바꾸기" : "지금 쓰는 통신사 고르기"}</button></span></p></div></div>`;
   }
   function optVol(p, s) {
-    if (p.vols.length < 2) return `<div class="opt"><div class="opt__t"><h2>용량</h2><span class="hint num">${p.vols[0][0]} · 출고가 ${H.won(p.vols[0][1])}</span></div></div>`;
-    return `<div class="opt"><div class="opt__t"><h2>용량</h2></div><div class="opt__body choice-row${p.vols.length > 2 ? " choice-row--3" : ""}">${p.vols.map(function (v, i) {
+    if (p.vols.length < 2) return `<div class="opt" data-n="03"><div class="opt__t"><h2>용량</h2><span class="hint num">${p.vols[0][0]} · 출고가 ${H.won(p.vols[0][1])}</span></div></div>`;
+    return `<div class="opt" data-n="03"><div class="opt__t"><h2>용량</h2></div><div class="opt__body choice-row${p.vols.length > 2 ? " choice-row--3" : ""}">${p.vols.map(function (v, i) {
       return `<button type="button" class="choice choice--center" data-act="setOpt" data-k="vol" data-v="${i}" aria-pressed="${s.vol === i}">${v[0]}<small class="num">${H.won(v[1])}</small></button>`;
     }).join("")}</div></div>`;
   }
   H.colorPicker = function (p, ci, act) {
     var c = p.colors[ci] || p.colors[0];
-    return `<div class="opt opt--color"><div class="opt__t"><h2>색상</h2><span class="sw-name" aria-live="polite"><i style="background:${c[1]}"></i>${c[0]}</span></div>
+    return `<div class="opt opt--color" data-n="01"><div class="opt__t"><h2>색상</h2><span class="sw-name" aria-live="polite"><i style="background:${c[1]}"></i>${c[0]}</span></div>
       <div class="opt__body swatches" role="radiogroup" aria-label="색상">${p.colors.map(function (x, i) {
         return `<button type="button" class="sw" role="radio" aria-checked="${ci === i}" aria-label="${x[0]}" title="${x[0]}" data-act="${act}" data-k="color" data-v="${i}"><i style="background:${x[1]}"></i><span class="sw__t">${x[0]}</span></button>`;
       }).join("")}</div></div>`;
   };
   function optPlan(p, s, r) {
     var pl = r.plan, n = H.offeredRows(p, s.cc, s.method, s.discount).length;
-    return `<div class="opt"><div class="opt__t"><h2>요금제</h2><span class="hint">${H.carrierLabel(s.cc)} ${n}개 중에서 고르기</span></div>
+    return `<div class="opt" data-n="04"><div class="opt__t"><h2>요금제</h2><span class="hint">${H.carrierLabel(s.cc)} ${n}개 중에서 고르기</span></div>
       <div class="opt__body"><button type="button" class="plan-btn" data-act="planSheet"><span><b>${H.esc(pl.name)}</b><small>데이터 ${H.esc(pl.data)}${pl.after ? " · 다 쓰면 " + H.esc(pl.after) : ""} · 통화 ${H.esc(pl.voice)}</small></span><span class="fee num">월 ${H.won(r.planFeeBase)}${H.icon("chev-r", "ic--sm")}</span></button>
       <p class="plan-note">${H.icon("info")}185일 이후 월 ${H.num(H.floor(s.cc))}원까지 낮출 수 있어요(${H.carrierLabel(s.cc)} 기준)<a href="#/news/plan-down-185">자세히</a></p></div></div>`;
   }
@@ -131,7 +131,7 @@
     else if (best) line = `<p class="save-line">${H.icon("check")}<span>지금 고른 <b>${best.label}</b>이 ${when} <b class="num">${H.won(best.diff)}</b> 덜 내요.</span></p>`;
     else if (both) line = `<p class="save-line">${H.icon("info")}<span>두 방법의 24개월 합계가 같거나 한쪽만 돼요.</span></p>`;
     var more = both ? `<button type="button" class="more-btn" data-act="cmpSheet">24개월 합계 자세히 보기${H.icon("chev-r")}</button>` : "";
-    return `<div class="opt"><div class="opt__t"><h2>할인 방법</h2><a class="hint" href="#/news/check-before-buy">어느 쪽이 나아요?</a></div>
+    return `<div class="opt" data-n="05"><div class="opt__t"><h2>할인 방법</h2><a class="hint" href="#/news/check-before-buy">어느 쪽이 나아요?</a></div>
       <div class="opt__body"><div class="choice-row">${btn("official", "이통사지원금", "기기값에서 한 번에 할인", p.official)}${btn("select", "선택약정", "매달 요금 25% 할인", p.select)}</div>${basis}${line}${more}</div></div>`;
   }
   H.acts.cmpBasis = function (el) { H.state.cmpDown = el.dataset.v === "down"; H.save(); H.refreshProduct(); H.refocus(el); };
@@ -166,20 +166,12 @@
   };
   function optPay(s) {
     var cur = s.payment === "installment" ? String(s.months) : "0";
-    return `<div class="opt"><div class="opt__t"><h2>구매 방식</h2><span class="hint">통신사 할부 이자 연 5.9%</span></div><div class="opt__body choice-row choice-row--3">${[["0", "일시불"], ["24", "24개월 할부"], ["30", "30개월 할부"]].map(function (o) {
+    return `<div class="opt opt--last" data-n="06"><div class="opt__t"><h2>구매 방식</h2><span class="hint">통신사 할부 이자 연 5.9%</span></div><div class="opt__body choice-row choice-row--3">${[["0", "일시불"], ["24", "24개월 할부"], ["30", "30개월 할부"]].map(function (o) {
       return `<button type="button" class="choice choice--center" data-act="setOpt" data-k="pay" data-v="${o[0]}" aria-pressed="${cur === o[0]}">${o[1]}</button>`;
     }).join("")}</div></div>`;
   }
-  function priceBox(p, s, r) {
-    var conds = ["부가서비스", "카드발급", "기존폰 반납", "인터넷 가입"];
-    return `<div class="pbox" aria-live="polite">
-      <div class="pbox__main"><span class="k">나의 실구매가</span><span class="v num">${H.won(r.principal)}</span></div>
-      <div class="pbox__conds">${conds.map(function (c) { return `<span class="cond-pill">${c}<b>${H.icon("check")}없음</b></span>`; }).join("")}</div>
-      <div class="pbox__month"><span class="k">월 납부 금액 (VAT 포함)</span><span class="v num">${H.won(r.monthlyTotal)}</span></div>
-      <p class="pbox__parts num"><span>휴대폰 ${H.won(r.monthlyTotal - r.planFee)}</span><i>+</i><span>요금 ${H.won(r.planFee)}</span></p>
-      <p class="pbox__note">지금 보시는 금액이 최종 결제 금액이에요. 추가 청구는 없어요. 할부를 고른 경우에만 통신사 할부 이자(연 5.9%)가 붙어요.</p>
-      <div class="pbox__rows">${H.priceRows(p, s, r)}</div></div>`;
-  }
+  /* 금액칸 = 탑승권 한 장 (core.js H.ticketHtml) — 출발역(지금 통신사) → 도착역(개통 통신사) */
+  function priceBox(p, s, r) { return H.ticketHtml(p, s, r, {}); }
   H.floatCard = function (p) {
     var s = H.selFor(p), r = H.price(p, s);
     return `<div class="pdf__prod"><span class="pdf__th"><img src="${H.img(p, s.color)}" alt=""></span><span><b>${p.name}</b><small>${H.esc(H.condLine(p, s, r))}</small></span></div>
@@ -209,7 +201,7 @@
     return `<div class="pd-sheet mo-only" id="pdSheet" aria-hidden="${!up}" style="height:${stopH(H.pdStop)}px">
       <button type="button" class="pd-sheet__grab" data-act="barDetail" aria-label="금액 상세 ${up ? "접기" : "펴기"}"><i></i></button>
       <div class="pd-sheet__in">${H.priceSheetCard(p)}</div>
-    </div><button type="button" class="bar__price" data-act="barDetail" aria-expanded="${up}"><small class="num">실구매가 ${H.won(r.principal)} · ${r.months ? r.months + "개월 할부" : "일시불"}</small><b class="num">월 ${H.won(r.monthlyTotal)}${H.icon("chev-d", "bar__chev")}</b></button><button type="button" class="bar__more pc-only" data-act="barMore" aria-expanded="false">금액 상세${H.icon("chev-d", "bar__chev2")}</button><button type="button" class="btn btn--mg" data-act="order">주문하기</button>`;
+    </div><button type="button" class="bar__price" data-act="barDetail" aria-expanded="${up}"><small class="num">${H.state.carrier ? H.carrierLabel(H.state.carrier) + " → " : ""}${H.carrierLabel(s.cc)} ${H.methodLabel(s.method)} · 실구매가 ${H.won(r.principal)}</small><b class="num">월 ${H.won(r.monthlyTotal)}${H.icon("chev-d", "bar__chev")}</b></button><button type="button" class="bar__more pc-only" data-act="barMore" aria-expanded="false">금액 상세${H.icon("chev-d", "bar__chev2")}</button><button type="button" class="btn btn--mg" data-act="order">주문하기</button>`;
   };
   H.acts.barMore = function (el) { var on = document.body.classList.toggle("bar-open"); el.setAttribute("aria-expanded", String(on)); };
 
@@ -255,11 +247,11 @@
   H.acts.pdClose = function () { H.pdSheet("closed"); };
   H.acts.barDetail = function () {
     if (matchMedia("(min-width: 1024px)").matches) {
-      var box = H.$(".pbox");
+      var box = H.$(".ticket");
       if (!box) return;
       var hdr = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--hdr"), 10) || 50;
       window.scrollTo({ top: Math.max(0, box.getBoundingClientRect().top + window.scrollY - hdr - 12), behavior: "smooth" });
-      box.classList.remove("pbox--flash"); void box.offsetWidth; box.classList.add("pbox--flash");
+      box.classList.remove("ticket--flash"); void box.offsetWidth; box.classList.add("ticket--flash");
       return;
     }
     H.pdSheet(H.pdStop === "closed" ? "half" : "closed");

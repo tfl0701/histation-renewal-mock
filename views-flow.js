@@ -74,12 +74,9 @@
     if (!H.state.loggedIn) setTimeout(function () { H.acts.login(null, "#/order"); }, 80);
     var s = H.fix(p, d.sel), r = H.price(p, s), f = form(), all = f.agree.every(Boolean);
     var flow = ["간편정보 입력", "온라인 신청서 작성", "가입내역 확인", "개통 · 배송"].map(function (t, i) { return i === 0 ? "<b>" + t + "</b>" : "<span>" + t + "</span>"; }).join(H.icon("chev-r"));
-    var side = `<aside class="order__side"><div class="sum">
-        <div class="sum__prod"><div class="sum__th"><img src="${H.img(p, s.color)}" alt=""></div><div><b>${p.name}</b><small>${H.esc(H.condLine(p, s, r))}</small></div></div>
-        <div class="pbox__rows">${H.priceRows(p, s, r)}${f.usePoint ? `<div class="row"><span>마일리지 사용</span><b class="num minus">- ${H.num(H.mileageLeft())}P</b></div>` : ""}</div>
-        <div class="sum__total"><span>월 납부 금액</span><b class="num">${H.won(r.monthlyTotal)}</b></div>
+    var side = `<aside class="order__side">${H.ticketHtml(p, s, r, { rows: "open", conds: false, note: false, extraRows: f.usePoint ? `<div class="row"><span>마일리지 사용</span><b class="num minus">- ${H.num(H.mileageLeft())}P</b></div>` : "" })}
         <div class="order-submit pc-only"><button type="button" class="btn btn--mg btn--block" data-act="submitOrder">주문 접수하기</button><p class="demo-note"><span class="demo-tag">시안</span>실제로 접수되지 않아요</p></div>
-      </div><a class="link-arrow pd-more" href="#/phone/${p.id}">조건 바꾸기${H.icon("arrow")}</a></aside>`;
+        <a class="link-arrow pd-more" href="#/phone/${p.id}">조건 바꾸기${H.icon("arrow")}</a></aside>`;
     var body = `<div class="order-form">
       <div class="demo-tools"><span class="demo-tag">시안</span><button type="button" class="btn btn--soft btn--sm" data-act="orderSample">예시로 채우기</button></div>
       <section class="form-sec"><h2>가입하시는 분</h2><p class="desc">로그인 정보로 채웠어요. 다르면 고쳐 주세요. 개통은 <b>${H.carrierLabel(s.cc)} ${H.methodLabel(s.method)}</b>이에요.</p>
@@ -196,10 +193,8 @@
   ${formDone ? "" : `<section class="next-card"><small>지금 할 일</small><h2>온라인 신청서 작성하기</h2><p>${H.carrierLabel(s.cc)} 가입에 필요한 신청서예요. 3분이면 충분해요. 같은 링크를 카카오톡으로도 보내드렸어요.</p>
     <button type="button" class="btn btn--mg btn--block" data-act="writeForm" data-id="${o.id}">온라인 신청서 작성하기</button>
     <a class="later" href="#/my">나중에 마이페이지에서 쓸게요</a></section>`}
-  <div class="sum">
-    <div class="sum__prod"><div class="sum__th"><img src="${H.img(p, s.color)}" alt=""></div><div><b>${p.name}</b><small class="num">신청번호 ${o.id} · ${o.date}</small></div></div>
-    <dl class="kv"><div><dt>통신사</dt><dd>${H.carrierLabel(s.cc)} ${H.methodLabel(s.method)}</dd></div><div><dt>기기</dt><dd>${p.vols[s.vol][0]} · ${p.colors[s.color][0]}</dd></div><div><dt>할인</dt><dd>${H.discountLabel(s.discount)} · ${pr.plan.name}</dd></div><div><dt>월 납부 금액</dt><dd class="num">${H.won(o.monthly)}</dd></div>${o.netAsk || o.rentAsk ? `<div><dt>같이 상담</dt><dd>${[o.netAsk ? "인터넷" : "", o.rentAsk ? "정수기" : ""].filter(Boolean).join(" · ")} — 담당자가 따로 연락드려요</dd></div>` : ""}</dl>
-  </div>
+  ${H.ticketHtml(p, s, pr, { conds: false, note: false, code: "신청번호 " + o.id + " · " + o.date })}
+  ${o.netAsk || o.rentAsk ? `<p class="a-note">${H.icon("info")}<span><b>같이 상담</b> ${[o.netAsk ? "인터넷" : "", o.rentAsk ? "정수기" : ""].filter(Boolean).join(" · ")} — 담당자가 따로 연락드려요.</span></p>` : ""}
   <div class="done__acts"><a class="btn btn--soft btn--sm" href="#/my/order/${o.id}">신청내역 상세 보기</a><button type="button" class="btn btn--line btn--sm" data-act="kakao">${H.icon("kakao", "ic--fill")}카카오톡으로 물어보기</button><a class="btn btn--soft btn--sm" href="#/">첫 화면으로</a></div>
 </div></div>`
     };

@@ -122,7 +122,7 @@
     <div><dt>요금제</dt><dd>${pr.plan.name} · 월 ${H.won(pr.planFeeBase)}</dd></div>
     <div><dt>유지 기간</dt><dd>185일 · 이후 ${H.carrierLabel(s.cc)} 월 ${H.num(H.floor(s.cc))}원까지 낮출 수 있어요</dd></div>
   </dl></section>
-  <section class="form-sec"><h2>금액</h2><div class="sum sum--flat"><div class="pbox__rows">${H.priceRows(p, s, pr)}</div><div class="sum__total"><span>월 납부 금액</span><b class="num">${H.won(pr.monthlyTotal)}</b></div></div></section>
+  ${H.ticketHtml(p, s, pr, { rows: "open", conds: false, note: false, code: "신청번호 " + o.id + " · " + o.date })}
   <p class="help-t">내용이 다르면 담당자에게 알려 주세요. 확인은 카카오톡 답장으로 받고 있어요.</p>
 </div>`
     };
@@ -266,8 +266,7 @@
     <div><dt>구매 방식</dt><dd>${pr.months ? pr.months + "개월 할부" : "일시불"}</dd></div>
     ${o.netAsk || o.rentAsk ? `<div><dt>같이 상담</dt><dd>${[o.netAsk ? "인터넷" : "", o.rentAsk ? "정수기" : ""].filter(Boolean).join(" · ")}</dd></div>` : ""}
   </dl></section>
-  <section class="form-sec"><h2>금액</h2><div class="sum sum--flat"><div class="pbox__rows">${H.priceRows(p, s, pr)}${o.usedMileage ? `<div class="row"><span>마일리지 사용</span><b class="num minus">- ${H.num(o.usedMileage)}P</b></div>` : ""}</div>
-    <div class="sum__total"><span>월 납부 금액</span><b class="num">${H.won(pr.monthlyTotal)}</b></div></div></section>
+  ${H.ticketHtml(p, s, pr, { conds: false, note: false, code: "신청번호 " + o.id + " · " + o.date, extraRows: o.usedMileage ? `<div class="row"><span>마일리지 사용</span><b class="num minus">- ${H.num(o.usedMileage)}P</b></div>` : "" })}
   <section class="form-sec"><h2>받으실 곳</h2><dl class="kv">
     <div><dt>주소</dt><dd>${H.esc([o.addr, o.addr2].filter(Boolean).join(" ") || "-")}</dd></div>
     <div><dt>송장번호</dt><dd>${o.step >= 3 ? `<span class="num">${H.esc(o.courier || "CJ대한통운")} ${H.esc(o.trackingNo || "123456789012")}</span> <span class="demo-tag">예시</span>` : "택배를 보내면 알려드려요"}</dd></div>
